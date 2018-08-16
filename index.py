@@ -13,11 +13,18 @@ green = (0, 155, 0)
 magenta = (255, 0, 255)
 blue = (0, 0, 255)
 yellow = (255, 255, 0)
+tankGreen = (80, 112, 85)
 
 clock = pygame.time.Clock()
 
 display_width = 800
 display_height = 600
+
+
+tankWidth = 40
+tankHeight = 20
+turretWidth = 5
+wheelWidth = 5
 
 FPS = 20
 
@@ -36,12 +43,6 @@ pygame.display.set_caption('BATTLE TANKS')
 def score(score):
   text = smFont.render('Score: '+str(score), True, black)
   gameDisplay.blit(text, [0, 0])
-
-def randAppleGen():
-  randAppleX = round(random.randrange(0, display_width - block_size)/10.0)*10.0
-  randAppleY = round(random.randrange(0, display_height - block_size)/10.0)*10.0
-
-  return randAppleX,randAppleY
 
 def text_objs(text, color, size):
   if size == 'small':
@@ -62,6 +63,40 @@ def message_to_screen(msg, color, y_displace=0, size='small'):
   textSurf, textRect = text_objs(msg, color, size)
   textRect.center = (display_width/2), (display_height/2) + y_displace
   gameDisplay.blit(textSurf, textRect)
+
+def tank(x, y, pos=0):
+  x = int(x)
+  y = int(y)
+
+  possTurrets = [
+    (x-27, y-2),
+    (x-26, y-5),
+    (x-25, y-8),
+    (x-23, y-12),
+    (x-20, y-14),
+    (x-18, y-15),
+    (x-15, y-17),
+    (x-13, y-19),
+    (x-11, y-21)
+  ]
+
+
+  pygame.draw.circle(gameDisplay, tankGreen, (x, y), int(tankHeight/2))
+  pygame.draw.rect(gameDisplay, tankGreen, (x-tankHeight, y, tankWidth, tankHeight))
+  pygame.draw.line(gameDisplay, tankGreen, (x, y), possTurrets[pos], turretWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x-15, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x-10, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x-5, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x+5, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x+10, y+22), wheelWidth)
+  pygame.draw.circle(gameDisplay, tankGreen, (x+15, y+22), wheelWidth)
+
+
+  # startX = 20
+  # for x in range(8):
+  #   pygame.draw.circle(gameDisplay, tankGreen, (x-startX, y+20), wheelWidth)
+  #   startX -= 5
 
 def gameInfo():
   info = True
@@ -166,12 +201,16 @@ def game_intro():
     pygame.display.update()
     clock.tick(15)
 
-
-
 def gameLoop():
   
   gameExit = False
   gameOver = False
+
+  mainTankX = display_width * 0.9
+  mainTankY = display_height * 0.9
+  tankMove = 0
+  currTurPos = 0
+  changeTurPos = 0
 
   while not gameExit:
 
@@ -198,21 +237,34 @@ def gameLoop():
         gameExit = True
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_LEFT:
-          pass
+          tankMove = -5
         elif event.key == pygame.K_RIGHT:
-          pass
+          tankMove = 5
         elif event.key == pygame.K_UP:
-          pass
+          changeTurPos = 1
         elif event.key == pygame.K_DOWN:
-          pass
+          changeTurPos = -1
         elif event.key == pygame.K_SPACE:
           pause()
         elif event.key == pygame.K_ESCAPE:
           gameExit = True
           gameOver = False
+      elif event.type == pygame.KEYUP:
+        if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+          tankMove = 0
+        elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+          changeTurPos = 0
  
     
     gameDisplay.fill(gray)
+    mainTankX += tankMove
+    currTurPos += changeTurPos
+    if currTurPos > 8:
+      currTurPos = 8
+    elif currTurPos < 0:
+      currTurPos = 0
+    tank(mainTankX, mainTankY, currTurPos)
+
     pygame.display.update()
   
     clock.tick(FPS)
