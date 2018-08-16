@@ -92,6 +92,8 @@ def tank(x, y, pos=0):
   pygame.draw.circle(gameDisplay, tankGreen, (x+10, y+22), wheelWidth)
   pygame.draw.circle(gameDisplay, tankGreen, (x+15, y+22), wheelWidth)
 
+  return possTurrets[pos]
+
 
   # startX = 20
   # for x in range(8):
@@ -172,6 +174,30 @@ def pause():
 def barrier(randBarX, randBarY, barWidth):
   pygame.draw.rect(gameDisplay, black, [randBarX, display_height-randBarY, barWidth, randBarY])
 
+def fireShell(gunXY, mainTankX, mainTankY, currTurPos):
+  fire = True
+  startingShell = list(gunXY)
+  print ('fire', gunXY)
+  while fire:
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        pygame.quit()
+        quit()
+
+    pygame.draw.circle(gameDisplay, red, (startingShell[0], startingShell[1]), 5)
+    startingShell[0] -= (12-currTurPos)*2
+
+    yDirection = ((((startingShell[0]-gunXY[0])*0.01)**2) - (currTurPos + currTurPos/(12-currTurPos)))
+
+    startingShell[1] += int(yDirection)
+
+    if startingShell[1] > display_height:
+      fire = False
+
+
+    pygame.display.update()
+    clock.tick(60)
+
 def game_intro():
   intro = True
   while intro:
@@ -221,6 +247,10 @@ def gameLoop():
 
   while not gameExit:
 
+    gameDisplay.fill(gray)
+    gun = tank(mainTankX, mainTankY, currTurPos)
+
+
     while gameOver:
       gameDisplay.fill(gray)
       message_to_screen('Game over!', red, -50, 'large')
@@ -252,6 +282,8 @@ def gameLoop():
         elif event.key == pygame.K_DOWN:
           changeTurPos = -1
         elif event.key == pygame.K_SPACE:
+          fireShell(gun, mainTankX, mainTankY, currTurPos)
+        elif event.key == pygame.K_p:
           pause()
         elif event.key == pygame.K_ESCAPE:
           gameExit = True
@@ -263,7 +295,6 @@ def gameLoop():
           changeTurPos = 0
  
     
-    gameDisplay.fill(gray)
     mainTankX += tankMove
     currTurPos += changeTurPos
     if currTurPos > 8:
@@ -274,7 +305,7 @@ def gameLoop():
     if mainTankX-tankWidth/2 < randBarX+barWidth:
       mainTankX +=5
 
-    tank(mainTankX, mainTankY, currTurPos)
+    
     barrier(randBarX, randBarY, barWidth )
 
     pygame.display.update()
