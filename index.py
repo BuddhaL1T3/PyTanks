@@ -63,11 +63,21 @@ def message_to_screen(msg, color, y_displace=0, size='small'):
   textRect.center = (display_width/2), (display_height/2) + y_displace
   gameDisplay.blit(textSurf, textRect)
 
-def button(text, x, y, width, height, inactColor, actColor, inactTXTColor=black, actTXTColor=white):
+def button(text, x, y, width, height, inactColor, actColor, inactTXTColor=black, actTXTColor=white, action=None):
   cur = pygame.mouse.get_pos()
+  click = pygame.mouse.get_pressed()
   if x + width > cur[0] > x and y + height > cur[1] > y:
       pygame.draw.rect(gameDisplay, actColor, (x ,y ,width, height))
       text_to_btn(text, inactTXTColor, x, y, width, height)
+      if click[0] == 1 and action != None:
+        if action == 'quit':
+          pygame.quit()
+          quit()
+        if action =='info':
+          pass
+        if action == 'play':
+          gameLoop()
+
   else:
     pygame.draw.rect(gameDisplay, inactColor, (x ,y ,width, height))
     text_to_btn(text, actTXTColor, x, y, width, height)
@@ -114,35 +124,15 @@ def game_intro():
     # message_to_screen('But, be careful... If you run into yourself, or the walls, you will die.', black, 50, 'small')
     message_to_screen('During game play, press "Space-bar" to pause.', black, 30, 'small')
     message_to_screen('Press "Space-bar" to continue or "Esc" to quit.', black, 70, 'small')
-    # message_to_screen('red.', red, -150, 'small')
-    # message_to_screen('cyan.', cyan, -110, 'small')
-    # message_to_screen('green.', green, -70, 'small')
-    # message_to_screen('magenta.', magenta, -30, 'small')
-    # message_to_screen('blue.', blue, 10, 'small')
-    # message_to_screen('yellow.', yellow, 50, 'small')
 
-
-    # cur = pygame.mouse.get_pos()
-    # if 150 + 100 > cur[0] > 150 and 500+50 > cur[1] > 500:
-    #   pygame.draw.rect(gameDisplay, magenta, (150, 500, 100, 50))
-    # else:
-    #   pygame.draw.rect(gameDisplay, green, (150, 500, 100, 50))
-
-    # pygame.draw.rect(gameDisplay, green, (350, 500, 100, 50))
-    # pygame.draw.rect(gameDisplay, green, (550, 500, 100, 50))
-
-    # text_to_btn('PLAY', black, 150, 500, 100, 50)
-    # text_to_btn('CTRLs', black, 350, 500, 100, 50)
-    # text_to_btn('QUIT', black, 550, 500, 100, 50)
-
-    button('PLAY', 150, 500, 100, 50, green, magenta)
-    button('INFO', 350, 500, 100, 50, blue, yellow)
-    button('QUIT', 550, 500, 100, 50, red, cyan)
+    button('PLAY', 150, 500, 100, 50, green, magenta, action='play')
+    button('INFO', 350, 500, 100, 50, blue, yellow, action='info')
+    button('QUIT', 550, 500, 100, 50, red, cyan, action='quit')
 
     pygame.display.update()
     clock.tick(5)
 
-game_intro()
+
 
 def gameLoop():
   
@@ -195,5 +185,5 @@ def gameLoop():
   
   pygame.quit()
   quit()
-
+game_intro()
 gameLoop()
