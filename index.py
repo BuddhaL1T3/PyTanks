@@ -169,6 +169,12 @@ def pause():
           pygame.quit()
           quit()
 
+def barrier():
+  randX = (display_width/2) + random.randint(display_width*-0.2, display_width*0.2)
+  randY = random.randrange(display_height*0.1, display_height*0.6)
+
+  pygame.draw.rect(gameDisplay, black, [randX, display_height-randY, 50, randY])
+
 def game_intro():
   intro = True
   while intro:
@@ -264,6 +270,7 @@ def gameLoop():
     elif currTurPos < 0:
       currTurPos = 0
     tank(mainTankX, mainTankY, currTurPos)
+    barrier()
 
     pygame.display.update()
   
