@@ -6,10 +6,13 @@ pygame.init()
 
 white = (255, 255, 255)
 black = (0, 0, 0)
-red = (255, 0, 0)
-green = (0, 155, 0)
-blue = (0, 0, 155)
 gray = (195, 195, 195)
+red = (255, 0, 0)
+cyan = (0, 255, 255)
+green = (0, 155, 0)
+magenta = (255, 0, 255)
+blue = (0, 0, 255)
+yellow = (255, 255, 0)
 
 clock = pygame.time.Clock()
 
@@ -50,10 +53,24 @@ def text_objs(text, color, size):
 
   return textSurface, textSurface.get_rect()
 
+def text_to_btn(msg, color, btnX, btnY, btnWidth, btnHeight, size='small'):
+  textSurf, textRect = text_objs(msg, color, size)
+  textRect.center = btnX + btnWidth/2, btnY + btnHeight/2
+  gameDisplay.blit(textSurf, textRect)
+
 def message_to_screen(msg, color, y_displace=0, size='small'):
   textSurf, textRect = text_objs(msg, color, size)
   textRect.center = (display_width/2), (display_height/2) + y_displace
   gameDisplay.blit(textSurf, textRect)
+
+def button(text, x, y, width, height, inactColor, actColor, inactTXTColor=black, actTXTColor=white):
+  cur = pygame.mouse.get_pos()
+  if x + width > cur[0] > x and y + height > cur[1] > y:
+      pygame.draw.rect(gameDisplay, actColor, (x ,y ,width, height))
+      text_to_btn(text, inactTXTColor, x, y, width, height)
+  else:
+    pygame.draw.rect(gameDisplay, inactColor, (x ,y ,width, height))
+    text_to_btn(text, actTXTColor, x, y, width, height)
 
 def pause():
   paused = True
@@ -90,12 +107,37 @@ def game_intro():
           gameOver = False
 
     gameDisplay.fill(gray)
-    message_to_screen('Welcome to BLANK', green, -150, 'large')
-    message_to_screen('The objective of the game is to shoot and destroy the enemy tank before they destroy you', black, -30, 'small')
-    message_to_screen('The more enemies you destroy the harder they get\.', black, 10, 'small')
-    message_to_screen('But, be careful... If you run into yourself, or the walls, you will die.', black, 50, 'small')
-    message_to_screen('During game play, press "Space-bar" to pause.', black, 90, 'small')
-    message_to_screen('Press "Space-bar" to continue or "Esc" to quit.', black, 180, 'small')
+    message_to_screen('BATTLE TANKS', blue, -180, 'large')
+    message_to_screen('The objective of the game is to shoot', black, -90, 'small')
+    message_to_screen('and destroy the enemy tank before they destroy you', black, -50, 'small')
+    message_to_screen('The more enemies you destroy the harder they get.', black, -10, 'small')
+    # message_to_screen('But, be careful... If you run into yourself, or the walls, you will die.', black, 50, 'small')
+    message_to_screen('During game play, press "Space-bar" to pause.', black, 30, 'small')
+    message_to_screen('Press "Space-bar" to continue or "Esc" to quit.', black, 70, 'small')
+    # message_to_screen('red.', red, -150, 'small')
+    # message_to_screen('cyan.', cyan, -110, 'small')
+    # message_to_screen('green.', green, -70, 'small')
+    # message_to_screen('magenta.', magenta, -30, 'small')
+    # message_to_screen('blue.', blue, 10, 'small')
+    # message_to_screen('yellow.', yellow, 50, 'small')
+
+
+    # cur = pygame.mouse.get_pos()
+    # if 150 + 100 > cur[0] > 150 and 500+50 > cur[1] > 500:
+    #   pygame.draw.rect(gameDisplay, magenta, (150, 500, 100, 50))
+    # else:
+    #   pygame.draw.rect(gameDisplay, green, (150, 500, 100, 50))
+
+    # pygame.draw.rect(gameDisplay, green, (350, 500, 100, 50))
+    # pygame.draw.rect(gameDisplay, green, (550, 500, 100, 50))
+
+    # text_to_btn('PLAY', black, 150, 500, 100, 50)
+    # text_to_btn('CTRLs', black, 350, 500, 100, 50)
+    # text_to_btn('QUIT', black, 550, 500, 100, 50)
+
+    button('PLAY', 150, 500, 100, 50, green, magenta)
+    button('INFO', 350, 500, 100, 50, blue, yellow)
+    button('QUIT', 550, 500, 100, 50, red, cyan)
 
     pygame.display.update()
     clock.tick(5)
