@@ -26,7 +26,7 @@ medFont = pygame.font.SysFont('comicsansms', 50)
 lgFont = pygame.font.SysFont('comicsansms', 80)
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
-pygame.display.set_caption('IDK YET :)')
+pygame.display.set_caption('BATTLE TANKS')
 
 # icon = pygame.image.load('appleicon.png')
 # pygame.display.set_icon(icon)
@@ -63,6 +63,38 @@ def message_to_screen(msg, color, y_displace=0, size='small'):
   textRect.center = (display_width/2), (display_height/2) + y_displace
   gameDisplay.blit(textSurf, textRect)
 
+def gameInfo():
+  info = True
+  while info:
+
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        pygame.quit()
+        quit()
+
+    gameDisplay.fill(gray)
+    # message_to_screen('BATTLE TANKS', blue, -180, 'large')
+    message_to_screen('Objective', blue, -250, 'medium')
+    message_to_screen('The objective of the game is to shoot', black, -190, 'small')
+    message_to_screen('and destroy the enemy tank before they destroy you.', black, -150, 'small')
+    message_to_screen('The more enemies you destroy the harder they get.', black, -110, 'small')
+
+    message_to_screen('Controls', blue, -60, 'medium')
+    message_to_screen('FIRE: SPACE-BAR', black, 0, 'small')
+    message_to_screen('Move Turret: UP and DOWN arrows', black, 40, 'small')
+    message_to_screen('Move Tank: LEFT and RIGHT arrows', black, 80, 'small')
+    message_to_screen('Pause: P', black, 120, 'small')
+
+
+    button('PLAY', 150, 500, 100, 50, green, magenta, action='play')
+    button('BACK', 350, 500, 100, 50, blue, yellow, action='back')
+    button('QUIT', 550, 500, 100, 50, red, cyan, action='quit')
+
+    pygame.display.update()
+    clock.tick(15)
+
+
+
 def button(text, x, y, width, height, inactColor, actColor, inactTXTColor=black, actTXTColor=white, action=None):
   cur = pygame.mouse.get_pos()
   click = pygame.mouse.get_pressed()
@@ -74,9 +106,11 @@ def button(text, x, y, width, height, inactColor, actColor, inactTXTColor=black,
           pygame.quit()
           quit()
         if action =='info':
-          pass
+          gameInfo()
         if action == 'play':
           gameLoop()
+        if action == 'back':
+          game_intro()
 
   else:
     pygame.draw.rect(gameDisplay, inactColor, (x ,y ,width, height))
@@ -118,19 +152,19 @@ def game_intro():
 
     gameDisplay.fill(gray)
     message_to_screen('BATTLE TANKS', blue, -180, 'large')
-    message_to_screen('The objective of the game is to shoot', black, -90, 'small')
-    message_to_screen('and destroy the enemy tank before they destroy you', black, -50, 'small')
-    message_to_screen('The more enemies you destroy the harder they get.', black, -10, 'small')
+    # message_to_screen('The objective of the game is to shoot', black, -90, 'small')
+    # message_to_screen('and destroy the enemy tank before they destroy you', black, -50, 'small')
+    # message_to_screen('The more enemies you destroy the harder they get.', black, -10, 'small')
     # message_to_screen('But, be careful... If you run into yourself, or the walls, you will die.', black, 50, 'small')
-    message_to_screen('During game play, press "Space-bar" to pause.', black, 30, 'small')
-    message_to_screen('Press "Space-bar" to continue or "Esc" to quit.', black, 70, 'small')
+    
+    # message_to_screen('Press "Space-bar" to continue or "Esc" to quit.', black, 70, 'small')
 
-    button('PLAY', 150, 500, 100, 50, green, magenta, action='play')
-    button('INFO', 350, 500, 100, 50, blue, yellow, action='info')
-    button('QUIT', 550, 500, 100, 50, red, cyan, action='quit')
+    button('PLAY', 150, 300, 100, 50, green, magenta, action='play')
+    button('INFO', 350, 300, 100, 50, blue, yellow, action='info')
+    button('QUIT', 550, 300, 100, 50, red, cyan, action='quit')
 
     pygame.display.update()
-    clock.tick(5)
+    clock.tick(15)
 
 
 
