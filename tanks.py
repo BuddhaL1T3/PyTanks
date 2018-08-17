@@ -4,6 +4,12 @@ import random
 
 pygame.init()
 
+# fireSound = pygame.mixer.Sound('fire.wav')
+# boomSound = pygame.mixer.Sound('boom.wav')
+
+# pygame.mixer.music.load('song.wav')
+# pygame.mixer.music.play(-1)
+
 white = (255, 255, 255)
 black = (0, 0, 0)
 gray = (195, 195, 195)
@@ -19,7 +25,6 @@ clock = pygame.time.Clock()
 
 display_width = 800
 display_height = 600
-
 
 tankWidth = 40
 tankHeight = 20
@@ -197,6 +202,7 @@ def barrier(randBarX, randBarY, barWidth):
   pygame.draw.rect(gameDisplay, black, [randBarX, display_height-randBarY, barWidth, randBarY])
 
 def boom(x, y, size = 50):
+  # pygame.mixer.Sound.play(boomSound)
   boom = True
   while boom:
     for event in pygame.event.get():
@@ -219,6 +225,7 @@ def boom(x, y, size = 50):
     boom = False
 
 def fireShell(gunXY, turPos, power, randBarX, randBarY, barWidth, enemyTankX, enemyTankY):
+  # pygame.mixer.Sound.play(fireSound)
   damage = 0
   fire = True
   startingShell = list(gunXY)
@@ -237,8 +244,14 @@ def fireShell(gunXY, turPos, power, randBarX, randBarY, barWidth, enemyTankX, en
     if startingShell[1] > display_height-groundHeight:
       hitX = int(startingShell[0] * (display_height-groundHeight)/startingShell[1])
       hitY = int(display_height-groundHeight)
-      if enemyTankX + 15 > hitX > enemyTankX - 15:
+      if enemyTankX + 10 > hitX > enemyTankX - 10:
         damage = 25
+      elif enemyTankX + 15 > hitX > enemyTankX - 15:
+        damage = 18
+      elif enemyTankX + 25 > hitX > enemyTankX - 25:
+        damage = 10
+      elif enemyTankX + 35 > hitX > enemyTankX - 35:
+        damage = 5
       boom(hitX, hitY)
       fire = False
 
@@ -308,14 +321,21 @@ def enemyFireShell(gunXY, turPos, power, randBarX, randBarY, barWidth, mainTankX
 
     pygame.draw.circle(gameDisplay, red, (startingShell[0], startingShell[1]), 5)
     startingShell[0] += (12-turPos)*2
-    yDirection = ((((startingShell[0]-gunXY[0])*0.015/(curPower/50))**2) - (turPos + turPos/(12-turPos)))
+    gunPower = random.randrange(int(curPower*0.9), int(curPower*1.1))
+    yDirection = ((((startingShell[0]-gunXY[0])*0.015/(gunPower/50))**2) - (turPos + turPos/(12-turPos)))
     startingShell[1] += int(yDirection)
 
     if startingShell[1] > display_height-groundHeight:
       hitX = int(startingShell[0] * (display_height-groundHeight)/startingShell[1])
       hitY = int(display_height-groundHeight)
-      if mainTankX + 15 > hitX > mainTankX - 15:
+      if mainTankX + 10 > hitX > mainTankX - 10:
         damage = 25
+      elif mainTankX + 15 > hitX > mainTankX - 15:
+        damage = 18
+      elif mainTankX + 25 > hitX > mainTankX - 25:
+        damage = 10
+      elif mainTankX + 35 > hitX > mainTankX - 35:
+        damage = 5
       boom(hitX, hitY)
       fire = False
 
@@ -493,6 +513,28 @@ def gameLoop():
         elif event.key == pygame.K_SPACE:
           damage = fireShell(gun, turPos, power, randBarX, randBarY, barWidth, enemyTankX, enemyTankY)
           enemyHealth -= damage
+
+          enemyMoves = ['fwd','rev']
+          moveIndex = random.randrange(0,2)
+          distance = random.randrange(0,10)
+
+          for x in range(random.randrange(0,10)):
+            if display_width*0.3 > enemyTankX > display_width*0.03:
+              if enemyMoves[moveIndex] == 'fwd':
+                enemyTankX += distance
+              elif enemyMoves[moveIndex] == 'rev':
+                enemyTankX -= distance
+              gameDisplay.fill(gray)
+              healthBar(playerHealth, enemyHealth)
+              gun = tank(mainTankX, mainTankY, turPos)
+              enemyGun = enemyTank(enemyTankX,enemyTankY, 8)
+              power += powerChange
+              shotPower(power)
+              barrier(randBarX, randBarY, barWidth )
+              gameDisplay.fill(green, rect=[0, display_height-groundHeight, display_width, groundHeight])
+              pygame.display.update()
+              clock.tick(FPS)
+
           damage = enemyFireShell(enemyGun, 8, 50, randBarX, randBarY, barWidth, mainTankX, mainTankX)
           playerHealth -= damage
           
