@@ -475,7 +475,7 @@ def gameLoop():
   power = 50
   powerChange = 0
 
-  randBarX = (display_width/2) + random.randint(display_width*-0.2, display_width*0.2 - barWidth)
+  randBarX = (display_width/2) + random.randint(display_width*-0.1, display_width*0.1 - barWidth)
   randBarY = random.randrange(display_height*0.1, display_height*0.6)
 
   while not gameExit:
@@ -573,6 +573,10 @@ def gameLoop():
     gun = tank(mainTankX, mainTankY, turPos)
     enemyGun = enemyTank(enemyTankX,enemyTankY, 8)
     power += powerChange
+    if power > 100:
+      power = 100
+    elif power < 1:
+      power = 1
     shotPower(power)
     barrier(randBarX, randBarY, barWidth )
     gameDisplay.fill(green, rect=[0, display_height-groundHeight, display_width, groundHeight])
